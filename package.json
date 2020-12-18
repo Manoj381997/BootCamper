@@ -20,7 +20,8 @@
   "homepage": "https://github.com/Manoj381997/DevCamper#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
