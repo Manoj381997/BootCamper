@@ -1,0 +1,22 @@
+openapi: 3.0.0
+servers:
+  - description: AWS Elastic Bean Stalk
+    # url: http://vault-backend.eba-wrntzw3k.ap-south-1.elasticbeanstalk.com/api/v1
+    url: http://localhost:3000/api/v1
+info:
+  version: 1.0.0
+  title: DevCamper API
+  description: Backend API for the DevCamper application to manage bootcamps, courses, reviews, users and authentication
+consumes: application/json
+produces: application/json
+paths:
+  /bootcamps:
+    get:
+      summary: GET All Bootcamps
+      tags:
+        - Bootcamps
+      responses:
+        '200':
+          description: On sucesss
+        '400':
+          description: On error
