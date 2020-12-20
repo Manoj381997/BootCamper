@@ -19,6 +19,9 @@ const bootcampsRouter = require('./routers/bootcamps.router');
 const app = express();
 const API = '/api/v1';
 
+// Body parser
+app.use(express.json());
+
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev')); // 'tiny', 'short', 'combined'
@@ -35,7 +38,7 @@ app.get('/', (req, res) => {
 app.use(
   API + '/swagger',
   swaggerUi.serve,
-  swaggerUi.setup(YAML.load('./swagger.yml'))
+  swaggerUi.setup(YAML.load('./swagger.yml'), { explorer: true })
 );
 
 // Mount Routers

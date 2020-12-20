@@ -1,12 +1,15 @@
 openapi: 3.0.0
 servers:
-  - description: AWS Elastic Bean Stalk
+  - description: localhost #AWS Elastic Bean Stalk
     # url: http://vault-backend.eba-wrntzw3k.ap-south-1.elasticbeanstalk.com/api/v1
     url: http://localhost:3000/api/v1
 info:
   version: 1.0.0
   title: DevCamper API
   description: Backend API for the DevCamper application to manage bootcamps, courses, reviews, users and authentication
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 consumes: application/json
 produces: application/json
 paths:
@@ -17,6 +20,158 @@ paths:
         - Bootcamps
       responses:
         '200':
-          description: On sucesss
+          description: On success
         '400':
           description: On error
+  /bootcamps/:id:
+    get:
+      summary: GET single Bootcamp
+      tags:
+        - Bootcamps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/BootcampModel"
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /bootcamps:
+    post:
+      summary: Create new Bootcamp
+      tags:
+        - Bootcamps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/CreateBootcampModel"
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /bootcamps/:id:
+    put:
+      summary: Update Bootcamp
+      tags:
+        - Bootcamps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/UpdateBootcampModel"
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+
+#-------------------------------------------------------- Models for API's-------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
+
+components:
+  schemas:
+    GetBootcampModel:
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "5d713a66ec8f2b88b8f830b8"
+    CreateBootcampModel:
+      required:
+        - name
+        - description
+        - website
+        - phone
+        - email
+        - address
+        - careers
+        - housing
+        - jobAssistance
+        - jobGuarantee
+        - acceptGi
+      properties:
+        name:
+          type: string
+          example: "Code Academy Bootcamp"
+        description:
+          type: string
+          example: "Code Academy is a full stack Java Bootcamp"
+        website:
+          type: string
+          example: "https://codeacademy.com"
+        phone:
+          type: string
+          example: "(555) 555-5555"
+        email:
+          type: string
+          example: "enroll@codeacademy.com"
+        address:
+          type: string
+          example: "233 Bay State Rd Boston MA 02215"
+        careers:
+          type: array
+          items:
+            type: string
+          example: ["Web Development", "Other", "Business"]
+        housing:
+          type: boolean
+        jobAssistance:
+          type: boolean
+        jobGuarantee:
+          type: boolean
+        acceptGi:
+          type: boolean
+    UpdateBootcampModel:
+      required:
+        - name
+        - description
+        - website
+        - phone
+        - email
+        - address
+        - careers
+        - housing
+        - jobAssistance
+        - jobGuarantee
+        - acceptGi
+      properties:
+        name:
+          type: string
+          example: "Code Academy Bootcamp"
+        description:
+          type: string
+          example: "Code Academy is a full stack Java Bootcamp"
+        website:
+          type: string
+          example: "https://codeacademy.com"
+        phone:
+          type: string
+          example: "(555) 555-5555"
+        email:
+          type: string
+          example: "enroll@codeacademy.com"
+        address:
+          type: string
+          example: "233 Bay State Rd Boston MA 02215"
+        careers:
+          type: array
+          items:
+            type: string
+          example: ["Web Development", "Other", "Business"]
+        housing:
+          type: boolean
+        jobAssistance:
+          type: boolean
+        jobGuarantee:
+          type: boolean
+        acceptGi:
+          type: boolean
