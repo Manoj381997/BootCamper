@@ -3,9 +3,15 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 // const logger = require('./middleware/logger');
 const colors = require('colors');
+const errorHandler = require('./middleware/error');
 const connectDb = require('./config/db');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
+
+const app = express();
+
+// Body parser
+app.use(express.json());
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -16,11 +22,7 @@ connectDb();
 // Import Routers
 const bootcampsRouter = require('./routers/bootcamps.router');
 
-const app = express();
 const API = '/api/v1';
-
-// Body parser
-app.use(express.json());
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -43,6 +45,9 @@ app.use(
 
 // Mount Routers
 app.use(API + '/bootcamps', bootcampsRouter);
+
+// Load Error Handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(
