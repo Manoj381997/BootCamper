@@ -1,9 +1,12 @@
 const Bootcamp = require('../models/Bootcamp.model');
 
+const logger = '[BootcampController]';
+
 // @desc    GET All bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
 exports.getBootcamps = async (req, res, next) => {
+  const methodName = logger + '[GetBootcamps]';
   try {
     const bootcamps = await Bootcamp.find();
     res.status(200).json({
@@ -13,6 +16,7 @@ exports.getBootcamps = async (req, res, next) => {
       data: bootcamps,
     });
   } catch (err) {
+    console.log(methodName, err);
     res.status(500).json({
       success: false,
       message: `Couldn't retrieve bootcamps`,
@@ -25,6 +29,7 @@ exports.getBootcamps = async (req, res, next) => {
 // @route   GET /api/v1/bootcamps/:id
 // @access  Public
 exports.getBootcamp = async (req, res, next) => {
+  const methodName = logger + '[GetBootcamp]';
   try {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
@@ -42,6 +47,7 @@ exports.getBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
+    console.log(methodName, err);
     res.status(500).json({
       success: false,
       message: `Couldn't retrieve bootcamp`,
@@ -54,6 +60,7 @@ exports.getBootcamp = async (req, res, next) => {
 // @route   POST /api/v1/bootcamps
 // @access  Private
 exports.createBootcamp = async (req, res, next) => {
+  const methodName = logger + '[CreateBootcamp]';
   try {
     const bootcamp = await Bootcamp.create(req.body);
     res.status(201).json({
@@ -62,6 +69,7 @@ exports.createBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
+    console.log(methodName, err);
     res.status(400).json({
       success: false,
       message: `Couldn't create bootcamp`,
@@ -74,6 +82,7 @@ exports.createBootcamp = async (req, res, next) => {
 // @route   PUT /api/v1/bootcamps/:id
 // @access  Private
 exports.updateBootcamp = async (req, res, next) => {
+  const methodName = logger + '[UpdateBootcamp]';
   try {
     const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -94,6 +103,7 @@ exports.updateBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
+    console.log(methodName, err);
     res.status(400).json({
       success: false,
       message: `Couldn't update bootcamp`,
@@ -106,6 +116,7 @@ exports.updateBootcamp = async (req, res, next) => {
 // @route   DELETE /api/v1/bootcamps/:id
 // @access  Private
 exports.deleteBootcamp = async (req, res, next) => {
+  const methodName = logger + '[DeleteBootcamp]';
   try {
     const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
@@ -123,6 +134,7 @@ exports.deleteBootcamp = async (req, res, next) => {
       data: {},
     });
   } catch (err) {
+    console.log(methodName, err);
     res.status(400).json({
       success: false,
       message: `Couldn't delete bootcamp`,
