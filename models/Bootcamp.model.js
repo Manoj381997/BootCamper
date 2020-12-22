@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const BootcampSchema = new mongoose.Schema({
   name: {
@@ -11,8 +12,7 @@ const BootcampSchema = new mongoose.Schema({
   slug: String, // Basically, a URL friendly version of the name (Eg, DevCentral Bootcamp -> devcentral-bootcamp)
   description: {
     type: String,
-    required: true,
-    unique: false,
+    required: [true, 'Please add a description'],
     maxlength: [500, 'Description cannot be more than 500 characters'],
   },
   website: {
@@ -58,7 +58,7 @@ const BootcampSchema = new mongoose.Schema({
   },
   careers: {
     type: [String],
-    required: true,
+    required: [true, 'Please add careers'],
     enum: [
       'Web Development',
       'Mobile Development',
@@ -98,6 +98,13 @@ const BootcampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Create bootcamp slug from the name
+BootcampSchema.pre('save', function (next) {
+  // we use standard fn since we are using this keyword, whereas arrow fn handle "this" differently
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
