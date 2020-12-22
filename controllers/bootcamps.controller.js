@@ -2,6 +2,7 @@ const Bootcamp = require('../models/Bootcamp.model');
 const ErrorResponse = require('../utils/errorResponse');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const asyncHandler = require('../middleware/async');
+const geocoder = require('../utils/geocoder');
 
 const logger = '[BootcampController]';
 
@@ -112,6 +113,47 @@ exports.deleteBootcamp = async (req, res, next) => {
       success: true,
       message: 'Bootcamp deleted successfully',
       data: {},
+    });
+  } catch (err) {
+    console.log(methodName, err);
+    next(err);
+  }
+};
+
+// @desc    Get bootcamps within a radius
+// @route   DELETE /api/v1/bootcamps/radius/:zipcode/:distance/:unit
+// @access  Private
+exports.getBootcampsInRadius = async (req, res, next) => {
+  const methodName = logger + '[GetBootcampsInRadius]';
+  try {
+    const { zipcode, distance, unit } = req.params;
+
+    // Get lat/lng from geocoder
+    const loc = await geocoder.geocode(zipcode);
+    const lat = loc[0].latitude;
+    const lng = loc[0].longitude;
+
+    // Calc radius using radians
+    // Divide dist by radius of Earth
+    // Earth Radius = 3,963 mi / 6,378 km
+    let radius;
+    if (unit === 'mi') radius = distance / 3963;
+    else if (unit === 'km') radius = distance / 6378;
+    else
+      return next(
+        new ErrorResponse('Invalid distance unit', StatusCodes.BAD_REQUEST)
+      );
+
+    const bootcamps = await Bootcamp.find({
+      // https://docs.mongodb.com/manual/reference/operator/query/centerSphere/
+      location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      count: bootcamps.length,
+      message: 'Bootcamps retrieved successfully',
+      data: bootcamps,
     });
   } catch (err) {
     console.log(methodName, err);

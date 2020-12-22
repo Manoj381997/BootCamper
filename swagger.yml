@@ -96,6 +96,39 @@ paths:
           description: On success
         '400':
           description: On error
+  /bootcamps/radius/{zipcode}/{distance}/{unit}:
+    get:
+      parameters:
+        - in: path
+          name: zipcode
+          example: '02118' # Boston pincode
+          schema:
+            type: string
+          required: true
+          description: Zip Code
+        - in: path
+          name: distance
+          example: 10
+          schema:
+            type: number
+          required: true
+          description: Distance
+        - in: path
+          name: unit
+          example: mi
+          schema:
+            type: string
+          required: true
+          description: Distance Unit (mi/km)
+      summary: Find Bootcamps within range
+      tags:
+        - Bootcamps
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+
 #-------------------------------------------------------- Models for API's-------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
