@@ -21,6 +21,7 @@ connectDb();
 
 // Import Routers
 const bootcampsRouter = require('./routers/bootcamps.router');
+const coursesRouter = require('./routers/courses.router');
 
 const API = '/api/v1';
 
@@ -45,6 +46,7 @@ app.use(
 
 // Mount Routers
 app.use(API + '/bootcamps', bootcampsRouter);
+app.use(API + '/courses', coursesRouter);
 
 // Load Error Handler
 app.use(errorHandler);

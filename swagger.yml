@@ -72,7 +72,7 @@ paths:
       parameters:
         - in: path
           name: id
-          example: 5fdf43ebf6f3314e9ce3e4c0
+          example: 5d713995b721c3bb38c1f5d0
           schema:
             type: string
           required: true
@@ -89,7 +89,7 @@ paths:
       parameters:
         - in: path
           name: id
-          example: 5fdf43ebf6f3314e9ce3e4c0
+          example: 5d713995b721c3bb38c1f5d0
           schema:
             type: string
           required: true
@@ -112,7 +112,7 @@ paths:
       parameters:
         - in: path
           name: id
-          example: 5fdf43ebf6f3314e9ce3e4c0
+          example: 5d713995b721c3bb38c1f5d0
           schema:
             type: string
           required: true
@@ -152,6 +152,115 @@ paths:
       summary: Find Bootcamps within range
       tags:
         - Bootcamps
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /courses:
+    get:
+      summary: Get all Courses
+      tags:
+        - Courses
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /bootcamps/{bootcampId}/courses:
+    get:
+      parameters:
+        - in: path
+          name: bootcampId
+          example: '5d713995b721c3bb38c1f5d0'
+          schema:
+            type: string
+          required: true
+          description: Bootcamp ID
+      summary: Get courses for specific bootcamp
+      tags:
+        - Courses
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    post:
+      parameters:
+        - in: path
+          name: bootcampId
+          example: '5d713995b721c3bb38c1f5d0'
+          schema:
+            type: string
+          required: true
+          description: Bootcamp ID
+      summary: Create course for specific bootcamp
+      tags:
+        - Courses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/CreateCourseModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /courses/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          example: '5d725c84c4ded7bcb480eaa0'
+          schema:
+            type: string
+          required: true
+          description: Course ID
+      summary: Get single Course
+      tags:
+        - Courses
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    put:
+      parameters:
+        - in: path
+          name: id
+          example: '5d725c84c4ded7bcb480eaa0'
+          schema:
+            type: string
+          required: true
+          description: Course ID
+      summary: Update Course
+      tags:
+        - Courses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/UpdateCourseModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    delete:
+      parameters:
+        - in: path
+          name: id
+          example: '5d725c84c4ded7bcb480eaa0'
+          schema:
+            type: string
+          required: true
+          description: Course ID
+      summary: Delete Course
+      tags:
+        - Courses
       responses:
         '200':
           description: On success
@@ -203,12 +312,16 @@ components:
           example: ['Web Development', 'Other', 'Business']
         housing:
           type: boolean
+          example: false
         jobAssistance:
           type: boolean
+          example: false
         jobGuarantee:
           type: boolean
+          example: false
         acceptGi:
           type: boolean
+          example: false
     UpdateBootcampModel:
       properties:
         name:
@@ -236,9 +349,60 @@ components:
           example: ['Web Development', 'Other', 'Business']
         housing:
           type: boolean
+          example: false
         jobAssistance:
           type: boolean
+          example: false
         jobGuarantee:
           type: boolean
+          example: false
         acceptGi:
           type: boolean
+          example: false
+    CreateCourseModel:
+      required:
+        - title
+        - description
+        - weeks
+        - tuition
+        - minimumSkill
+        - scholarhipsAvailable
+      properties:
+        title:
+          type: string
+          example: 'MERN Stack Development'
+        description:
+          type: string
+          example: 'This course provides essentila knowledge on MERN stack development'
+        weeks:
+          type: number
+          example: 10
+        tuition:
+          type: number
+          example: 10000
+        minimumSkill:
+          type: string
+          example: intermediate
+        scholarhipsAvailable:
+          type: boolean
+          example: false
+    UpdateCourseModel:
+      properties:
+        title:
+          type: string
+          example: 'MERN Stack Development'
+        description:
+          type: string
+          example: 'This course provides essentila knowledge on MERN stack development'
+        weeks:
+          type: number
+          example: 10
+        tuition:
+          type: number
+          example: 10000
+        minimumSkill:
+          type: string
+          example: intermediate
+        scholarhipsAvailable:
+          type: boolean
+          example: false
