@@ -1,8 +1,9 @@
 openapi: 3.0.0
 servers:
-  - description: localhost #AWS Elastic Bean Stalk
+  - url: http://localhost:3000/api/v1
+    description: Local Server
     # url: http://vault-backend.eba-wrntzw3k.ap-south-1.elasticbeanstalk.com/api/v1
-    url: http://localhost:3000/api/v1
+    # description: AWS Elastic Bean Stalk
 info:
   version: 1.0.0
   title: DevCamper API
@@ -10,7 +11,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-consumes: application/json
+# consumes: application/json
 produces: application/json
 paths:
   /bootcamps:
@@ -157,8 +158,83 @@ paths:
           description: On success
         '400':
           description: On error
+  /bootcamps/{id}/photo:
+    # x-swagger-router-controller: bootcamps.controller
+    put:
+      # operationId: uploadBootcampPhoto
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: id
+          example: 5d713995b721c3bb38c1f5d0
+          schema:
+            type: string
+          required: true
+          description: Bootcamp ID
+        - in: formData
+          name: file
+          schema:
+            type: file
+          # required: true
+          description: The file to upload
+      summary: Upload photo for bootcamp
+      tags:
+        - Bootcamps
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /bootcamps/upload:
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: imageFile
+          schema:
+            type: file
+          description: The file to upload
+      summary: Upload Test photo
+      tags:
+        - Bootcamps
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
   /courses:
     get:
+      parameters:
+        - in: query
+          name: select
+          example: 'title,description'
+          schema:
+            type: string
+          required: false
+          description: Select specific fields
+        - in: query
+          name: sort
+          example: 'title'
+          schema:
+            type: string
+          required: false
+          description: Sort based on value
+        - in: query
+          name: page
+          example: 1
+          schema:
+            type: number
+          required: false
+          description: Select page number
+        - in: query
+          name: limit
+          example: 4
+          schema:
+            type: number
+          required: false
+          description: Select page limit
       summary: Get all Courses
       tags:
         - Courses

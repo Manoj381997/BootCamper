@@ -12,26 +12,20 @@ const logger = '[CoursesController]';
 // @access  Public
 exports.getCourses = asyncHandler(async (req, res, next) => {
   const methodName = logger + '[GetCourses]';
-  let query;
 
   if (req.params.bootcampId) {
-    query = Course.find({ bootcamp: req.params.bootcampId });
+    const courses = await Course.find({ bootcamp: req.params.bootcampId });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      count: courses.length,
+      message: 'Retrieved Courses',
+      data: courses,
+    });
   } else {
     // query = Course.find().populate('bootcamp');  // For displaying all fields of bootcamp
-    query = Course.find().populate({
-      path: 'bootcamp',
-      select: 'name description',
-    });
+    res.status(StatusCodes.OK).json(res.advancedResults);
   }
-
-  const courses = await query;
-
-  res.status(StatusCodes.OK).json({
-    success: true,
-    count: courses.length,
-    message: 'Retrieved Courses',
-    data: courses,
-  });
 });
 
 // @desc    GET single course
@@ -110,6 +104,8 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+
+  course.save(); // This will trigger middleware for averageCost while updating tuition
 
   res.status(StatusCodes.OK).json({
     success: true,

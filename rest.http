@@ -4,3 +4,6 @@ GET {{BASE_URL}}
 
 ### GET Bootcamps
 GET {{BASE_URL}}/bootcamps
+
+### GET Courses
+GET {{BASE_URL}}/courses

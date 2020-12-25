@@ -100,6 +100,7 @@ const BootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    id: false, // For eliminating duplicate id while creation of virtuals since due to below 2 lines 106 & 107
   },
   {
     toJSON: { virtuals: true },

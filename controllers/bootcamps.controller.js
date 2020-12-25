@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const asyncHandler = require('../middleware/async');
 const geocoder = require('../utils/geocoder');
+const path = require('path');
 
 const logger = '[BootcampController]';
 
@@ -11,82 +12,8 @@ const logger = '[BootcampController]';
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   const methodName = logger + '[GetBootcamps]';
-  let query;
 
-  // Save req.query
-  const reqQuery = { ...req.query };
-
-  // Fields to exclude
-  const removeFields = ['select', 'sort', 'page', 'limit'];
-
-  // Loop over removeFields and delete them from reqQuery
-  removeFields.forEach((param) => delete reqQuery[param]);
-
-  // Create query String
-  let queryStr = JSON.stringify(reqQuery);
-
-  // Create operators ($gt, $lt, $in, etc)
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
-
-  // Finding resource
-  query = Bootcamp.find(JSON.parse(queryStr)).populate({
-    path: 'courses',
-    select: 'title description',
-  });
-
-  // Select fields
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
-    query = query.select(fields);
-  }
-
-  // Sort
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort('-createdAt'); // '-' means Descending
-  }
-
-  // Pagination
-  const page = parseInt(req.query.page || process.env.PAGE, 10);
-  const pageLimit = parseInt(req.query.limit || process.env.PAGE_LIMIT, 10);
-  const startIndex = (page - 1) * pageLimit; // skip
-  const endIndex = page * pageLimit;
-  const total = await Bootcamp.countDocuments();
-
-  query = query.skip(startIndex).limit(pageLimit);
-
-  // Executing query
-  const bootcamps = await query;
-
-  // Pagination result
-  const pagination = {};
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit: pageLimit,
-    };
-  }
-
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit: pageLimit,
-    };
-  }
-
-  res.status(StatusCodes.OK).json({
-    success: true,
-    message: 'Retrieved All Bootcamps',
-    count: bootcamps.length,
-    pagination,
-    data: bootcamps,
-  });
+  res.status(StatusCodes.OK).json(res.advancedResults);
 });
 
 // @desc    GET Single bootcamp
@@ -232,5 +159,110 @@ exports.getBootcampsInRadius = async (req, res, next) => {
   } catch (err) {
     console.log(methodName, err);
     next(err);
+  }
+};
+
+// @desc    Upload photo for bootcamp
+// @route   PUT /api/v1/bootcamps/:id/photo
+// @access  Private
+exports.uploadBootcampPhoto = async (req, res, next) => {
+  const methodName = logger + '[UploadBootcampPhoto]';
+  try {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+
+    if (!bootcamp) {
+      return next(
+        new ErrorResponse(
+          `Bootcamp not found with id of ${req.params.id}`,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    console.log('[File]' + req.files);
+    if (!req.files) {
+      return next(
+        new ErrorResponse('Please upload a file', StatusCodes.BAD_REQUEST)
+      );
+    }
+
+    const file = req.files.file;
+
+    // Make sure the file is an image
+    if (!file.mimetype.startsWith('image')) {
+      // 'mimetype' will be like this : "image/jpg" or png etc
+      return next(
+        new ErrorResponse(
+          'Please upload an image file',
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    // Check file size
+    if (file.size > process.env.MAX_FILE_UPLOAD_SIZE) {
+      return next(
+        new ErrorResponse(
+          `Please upload an image file of size atmost ${process.env.MAX_FILE_UPLOAD_SIZE_IN_MB} MB`,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    // Create custom file name
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+      if (err) {
+        console.error(err);
+        return next(
+          new ErrorResponse(
+            'Problem with uploading the file',
+            StatusCodes.INTERNAL_SERVER_ERROR
+          )
+        );
+      }
+      await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Photo uploaded successfully',
+      data: file.name,
+    });
+  } catch (err) {
+    console.log(methodName, err);
+    next(err);
+  }
+};
+
+exports.uploadMethod = async (req, res, next) => {
+  const methodName = logger + '[UploadMethod]';
+  try {
+    if (!req.files) {
+      return next(
+        new ErrorResponse('Please upload a file', StatusCodes.BAD_REQUEST)
+      );
+    }
+
+    const file = req.files.imageFile;
+
+    // Make sure the file is an image
+    if (!file.mimetype.startsWith('image')) {
+      // 'mimetype' will be like this : "image/jpg" or png etc
+      return next(
+        new ErrorResponse(
+          'Please upload an image file',
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Photo uploaded successfully',
+      data: file.name,
+    });
+  } catch (err) {
+    console.error(err.message);
   }
 };
