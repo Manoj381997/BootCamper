@@ -3,6 +3,7 @@ const router = express.Router({ mergeParams: true });
 const coursesController = require('../controllers/courses.controller');
 const advancedResults = require('../middleware/advancedResults');
 const Course = require('../models/Course.model');
+const { protect, authorize } = require('../middleware/auth');
 
 router.get(
   '/',
@@ -13,8 +14,23 @@ router.get(
   coursesController.getCourses
 );
 router.get('/:id', coursesController.getCourse);
-router.post('/', coursesController.addCourse);
-router.put('/:id', coursesController.updateCourse);
-router.delete('/:id', coursesController.deleteCourse);
+router.post(
+  '/',
+  protect,
+  authorize('publisher', 'admin'),
+  coursesController.addCourse
+);
+router.put(
+  '/:id',
+  protect,
+  authorize('publisher', 'admin'),
+  coursesController.updateCourse
+);
+router.delete(
+  '/:id',
+  protect,
+  authorize('publisher', 'admin'),
+  coursesController.deleteCourse
+);
 
 module.exports = router;

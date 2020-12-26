@@ -235,6 +235,7 @@ exports.uploadBootcampPhoto = async (req, res, next) => {
   }
 };
 
+// Need to be removed
 exports.uploadMethod = async (req, res, next) => {
   const methodName = logger + '[UploadMethod]';
   try {

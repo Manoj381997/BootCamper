@@ -9,11 +9,15 @@ const connectDb = require('./config/db');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
+var cookieParser = require('cookie-parser');
 
 const app = express();
 
 // Body parser
 app.use(express.json());
+
+// Cookie parser
+app.use(cookieParser());
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -21,9 +25,17 @@ dotenv.config({ path: './config/config.env' });
 // Connect to database
 connectDb();
 
+// File uploading
+app.use(fileupload());
+
+// Set static folder
+// By making public folder as static we can access images like this "http://localhost:3000/uploads/photo_5d725a1b7b292f5f8ceff788.jpg"
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Import Routers
 const bootcampsRouter = require('./routers/bootcamps.router');
 const coursesRouter = require('./routers/courses.router');
+const authRouter = require('./routers/auth.router');
 
 const API = '/api/v1';
 
@@ -39,16 +51,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// File uploading
-app.use(fileupload());
-
-// Set static folder
-// By making public folder as static we can access images like this "http://localhost:3000/uploads/photo_5d725a1b7b292f5f8ceff788.jpg"
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Mount Routers
 app.use(API + '/bootcamps', bootcampsRouter);
 app.use(API + '/courses', coursesRouter);
+app.use(API + '/auth', authRouter);
 
 // app.post(API + '/bootcamps/upload', (req, res, next) => {
 //   console.log('Test File');

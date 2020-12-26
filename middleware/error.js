@@ -26,7 +26,7 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, StatusCodes.BAD_REQUEST);
   }
 
-  res.status(error.statusCode || 500).json({
+  res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
     success: false,
     error: error.message || 'Server Error',
   });
