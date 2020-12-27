@@ -36,6 +36,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const bootcampsRouter = require('./routers/bootcamps.router');
 const coursesRouter = require('./routers/courses.router');
 const authRouter = require('./routers/auth.router');
+const userRouter = require('./routers/user.router');
+const reviewRouter = require('./routers/review.router');
 
 const API = '/api/v1';
 
@@ -55,6 +57,8 @@ app.get('/', (req, res) => {
 app.use(API + '/bootcamps', bootcampsRouter);
 app.use(API + '/courses', coursesRouter);
 app.use(API + '/auth', authRouter);
+app.use(API + '/users', userRouter);
+app.use(API + '/reviews', reviewRouter);
 
 // app.post(API + '/bootcamps/upload', (req, res, next) => {
 //   console.log('Test File');
@@ -70,7 +74,7 @@ app.use(API + '/auth', authRouter);
 app.use(
   API + '/swagger',
   swaggerUi.serve,
-  swaggerUi.setup(YAML.load('./swagger.yml'), { explorer: true })
+  swaggerUi.setup(YAML.load('./swagger.yml'), { explorer: false })
 );
 
 // Load Error Handler

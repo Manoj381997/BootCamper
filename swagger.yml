@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers:
   - url: http://localhost:3000/api/v1
-    description: Local Server
+    description: Development Server
     # url: http://vault-backend.eba-wrntzw3k.ap-south-1.elasticbeanstalk.com/api/v1
     # description: AWS Elastic Bean Stalk
 info:
@@ -11,7 +11,10 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-# consumes: application/json
+  contact:
+    name: 'Manoj Kumar G'
+    url: 'https://www.linkedin.com/in/manojg381997/'
+consumes: application/json
 produces: application/json
 paths:
   /bootcamps:
@@ -55,6 +58,8 @@ paths:
           description: On error
     post:
       summary: Create new Bootcamp
+      security:
+        - BearerAuth: []
       tags:
         - Bootcamps
       requestBody:
@@ -87,6 +92,8 @@ paths:
         '400':
           description: On error
     put:
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -110,6 +117,8 @@ paths:
         '400':
           description: On error
     delete:
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -161,7 +170,8 @@ paths:
   /bootcamps/{id}/photo:
     # x-swagger-router-controller: bootcamps.controller
     put:
-      # operationId: uploadBootcampPhoto
+      security:
+        - BearerAuth: []
       consumes:
         - multipart/form-data
       parameters:
@@ -262,6 +272,8 @@ paths:
         '400':
           description: On error
     post:
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: bootcampId
@@ -303,6 +315,8 @@ paths:
         '400':
           description: On error
     put:
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -326,6 +340,8 @@ paths:
         '400':
           description: On error
     delete:
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -337,6 +353,392 @@ paths:
       summary: Delete Course
       tags:
         - Courses
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/register:
+    post:
+      summary: Register user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/RegisterModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/login:
+    post:
+      summary: Login for accessing other routes
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/LoginModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/me:
+    get:
+      security:
+        - BearerAuth: []
+      summary: Get logged in user details
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/forgotpassword:
+    post:
+      summary: Forgot password
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/ForgotPasswordModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/resetpassword/{resettoken}:
+    put:
+      parameters:
+        - in: path
+          name: resettoken
+          example: a59e6aa8c96c3c7ad8dd20d4dea87a03da3fa386
+          schema:
+            type: string
+          required: true
+          description: Reset Token is to identify user
+      summary: Set new password
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/ResetPasswordModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/updatedetails:
+    put:
+      security:
+        - BearerAuth: []
+      summary: Update user details
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/UpdateDetailsModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/updatepassword:
+    put:
+      security:
+        - BearerAuth: []
+      summary: Update password
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/UpdatePasswordModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /users:
+    get:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: select
+          example: 'name,email'
+          schema:
+            type: string
+          required: false
+          description: Select specific fields
+        - in: query
+          name: sort
+          example: 'name'
+          schema:
+            type: string
+          required: false
+          description: Sort based on value
+        - in: query
+          name: page
+          example: 1
+          schema:
+            type: number
+          required: false
+          description: Select page number
+        - in: query
+          name: limit
+          example: 4
+          schema:
+            type: number
+          required: false
+          description: Select page limit
+      summary: Get all Users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    post:
+      security:
+        - BearerAuth: []
+      summary: Create user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/CreateUserModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /users/{id}:
+    get:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          example: 5fe82ddc4a38925ce004ab1f
+          schema:
+            type: string
+          required: true
+          description: User Id
+      summary: Get single user
+      tags:
+        - Users
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    put:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          example: 5fe82ddc4a38925ce004ab1f
+          schema:
+            type: string
+          required: true
+          description: User Id
+      summary: Update user details
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/UpdateUserModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    delete:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          example: 5fe82ddc4a38925ce004ab1f
+          schema:
+            type: string
+          required: true
+          description: User Id
+      summary: Delete user
+      tags:
+        - Users
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /reviews:
+    get:
+      parameters:
+        - in: query
+          name: select
+          example: 'title,text'
+          schema:
+            type: string
+          required: false
+          description: Select specific fields
+        - in: query
+          name: sort
+          example: 'title'
+          schema:
+            type: string
+          required: false
+          description: Sort based on value
+        - in: query
+          name: page
+          example: 1
+          schema:
+            type: number
+          required: false
+          description: Select page number
+        - in: query
+          name: limit
+          example: 4
+          schema:
+            type: number
+          required: false
+          description: Select page limit
+      summary: Get all Reviews
+      tags:
+        - Reviews
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /bootcamps/{bootcampId}/reviews:
+    get:
+      parameters:
+        - in: path
+          name: bootcampId
+          example: '5d713995b721c3bb38c1f5d0'
+          schema:
+            type: string
+          required: true
+          description: Bootcamp ID
+      summary: Get reviews for specific bootcamp
+      tags:
+        - Reviews
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    post:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: bootcampId
+          example: '5d713995b721c3bb38c1f5d0'
+          schema:
+            type: string
+          required: true
+          description: Bootcamp ID
+      summary: Create review for specific bootcamp
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/CreateReviewModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /reviews/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          example: '5d7a514b5d2c12c7449be026'
+          schema:
+            type: string
+          required: true
+          description: Review ID
+      summary: Get single Review
+      tags:
+        - Reviews
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    put:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          example: '5d7a514b5d2c12c7449be026'
+          schema:
+            type: string
+          required: true
+          description: Review ID
+      summary: Update Review
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/UpdateReviewModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+    delete:
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          example: '5d7a514b5d2c12c7449be026'
+          schema:
+            type: string
+          required: true
+          description: Review ID
+      summary: Delete Review
+      tags:
+        - Reviews
       responses:
         '200':
           description: On success
@@ -365,7 +767,7 @@ components:
       properties:
         name:
           type: string
-          example: 'Code Academy Bootcamp'
+          example: 'Test Bootcamp'
         description:
           type: string
           example: 'Code Academy is a full stack Java Bootcamp'
@@ -446,7 +848,7 @@ components:
       properties:
         title:
           type: string
-          example: 'MERN Stack Development'
+          example: 'Test Development'
         description:
           type: string
           example: 'This course provides essentila knowledge on MERN stack development'
@@ -482,3 +884,126 @@ components:
         scholarhipsAvailable:
           type: boolean
           example: false
+    RegisterModel:
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: john123
+        role:
+          type: string
+          example: user
+    LoginModel:
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: john123
+    ForgotPasswordModel:
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: john@gmail.com
+    ResetPasswordModel:
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          example: john123
+    UpdateDetailsModel:
+      properties:
+        email:
+          type: string
+          example: john@gmail.com
+        name:
+          type: string
+          example: John Doe
+    UpdatePasswordModel:
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          example: john123
+        newPassword:
+          type: string
+          example: john1234
+    CreateUserModel:
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: john123
+        role:
+          type: string
+          example: user
+    UpdateUserModel:
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@gmail.com
+        role:
+          type: string
+          example: user
+    CreateReviewModel:
+      required:
+        - title
+        - text
+        - rating
+      properties:
+        title:
+          type: string
+          example: 'Test Review'
+        text:
+          type: string
+          example: 'This instructor knows what he does and hes really good in xplaining stuff'
+        rating:
+          type: number
+          example: 4
+    UpdateCourseModel:
+      properties:
+        title:
+          type: string
+          example: 'Test Review'
+        text:
+          type: string
+          example: 'This instructor knows what he does and hes really good in xplaining stuff'
+        rating:
+          type: number
+          example: 4
+
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: authorization

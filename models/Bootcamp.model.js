@@ -73,7 +73,7 @@ const BootcampSchema = new mongoose.Schema(
     averageRating: {
       type: Number,
       min: [1, 'Rating must be atleast 1'],
-      max: [10, 'Rating cannot be more than 10'],
+      max: [5, 'Rating cannot be more than 5'],
     },
     averageCost: Number,
     photo: {
@@ -99,6 +99,11 @@ const BootcampSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true,
     },
     id: false, // For eliminating duplicate id while creation of virtuals since due to below 2 lines 106 & 107
   },
