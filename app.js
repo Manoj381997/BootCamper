@@ -23,7 +23,7 @@ app.use(cookieParser());
 dotenv.config({ path: './config/config.env' });
 
 // Connect to database
-connectDb();
+// connectDb();
 
 // File uploading
 app.use(fileupload());
