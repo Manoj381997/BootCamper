@@ -1,9 +1,9 @@
 openapi: 3.0.0
 servers:
-  - url: http://localhost:3000/api/v1
-    description: Development Server
-    # url: http://vault-backend.eba-wrntzw3k.ap-south-1.elasticbeanstalk.com/api/v1
-    # description: AWS Elastic Bean Stalk
+  # - url: http://localhost:3000/api/v1
+  #   description: Development Server
+  - url: http://bootcamper-env.eba-awephpyv.ap-south-1.elasticbeanstalk.com/
+    description: AWS Elastic Bean Stalk
 info:
   version: 1.0.0
   title: DevCamper API
