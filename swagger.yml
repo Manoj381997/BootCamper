@@ -6,8 +6,8 @@ servers:
     description: AWS Elastic Bean Stalk
 info:
   version: 1.0.0
-  title: DevCamper API
-  description: Backend API for the DevCamper application to manage bootcamps, courses, reviews, users and authentication
+  title: BootCamper API
+  description: Backend API for the BootCamper application to manage bootcamps, courses, reviews, users and authentication
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
