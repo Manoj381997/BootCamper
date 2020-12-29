@@ -12,10 +12,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 
 // Security packages
-const mongoSanitize = require('express-mongo-sanitize');
+// const mongoSanitize = require('express-mongo-sanitize');
 // const helmet = require('helmet');
 // const xss = require('xss-clean');
-const hpp = require('hpp');
+// const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 // const cors = require('cors');
 
@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 // Sanitize data - To prevent NoSql Injection
 // https://blog.websecurify.com/2014/08/hacking-nodejs-and-mongodb.html
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // Set security headers like XSS-Protection, DNS-Prefetch-Control
 // app.use(helmet({ contentSecurityPolicy: false })); // For Docgen
@@ -40,7 +40,7 @@ app.use(mongoSanitize());
 // app.use(xss());
 
 // Prevent Http Parameter Pollution
-app.use(hpp());
+// app.use(hpp());
 
 // Enable CORS, Cross-Origin Resource sharing
 // app.use(cors());
