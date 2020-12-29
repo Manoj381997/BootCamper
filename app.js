@@ -17,7 +17,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
-const cors = require('cors');
+// const cors = require('cors');
 
 const app = express();
 
@@ -43,7 +43,7 @@ app.use(xss());
 app.use(hpp());
 
 // Enable CORS, Cross-Origin Resource sharing
-app.use(cors());
+// app.use(cors());
 
 // Global rate limiter
 const limiter = rateLimit({
