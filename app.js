@@ -9,7 +9,15 @@ const connectDb = require('./config/db');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
+
+// Security packages
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const app = express();
 
@@ -18,6 +26,31 @@ app.use(express.json());
 
 // Cookie parser
 app.use(cookieParser());
+
+// Sanitize data - To prevent NoSql Injection
+// https://blog.websecurify.com/2014/08/hacking-nodejs-and-mongodb.html
+app.use(mongoSanitize());
+
+// Set security headers like XSS-Protection, DNS-Prefetch-Control
+// app.use(helmet({ contentSecurityPolicy: false })); // For Docgen
+app.use(helmet());
+
+// Middleware use to sanitize user input
+// Prevent XSS attacks like adding html script tags in text,name,etc...
+app.use(xss());
+
+// Prevent Http Parameter Pollution
+app.use(hpp());
+
+// Enable CORS, Cross-Origin Resource sharing
+app.use(cors());
+
+// Global rate limiter
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 mins
+  max: 100,
+});
+app.use(limiter);
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -49,14 +82,23 @@ if (process.env.NODE_ENV === 'development') {
 
 app.get('/', (req, res) => {
   res.status(200).json({
-    MESSAGE: 'Welcome to DevCamper REST API. Use /api/v1/.... to proceed ',
+    MESSAGE: 'Welcome to BootCamper REST API. Use /api/v1/.... to proceed ',
+    SWAGGER:
+      'http://bootcamper-env.eba-awephpyv.ap-south-1.elasticbeanstalk.com/api/v1/swagger',
   });
 });
 
 // Mount Routers
 app.use(API + '/bootcamps', bootcampsRouter);
 app.use(API + '/courses', coursesRouter);
-app.use(API + '/auth', authRouter);
+app.use(
+  API + '/auth',
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 mins
+    max: 100,
+  }),
+  authRouter
+);
 app.use(API + '/users', userRouter);
 app.use(API + '/reviews', reviewRouter);
 

@@ -1,9 +1,9 @@
 openapi: 3.0.0
 servers:
-  - url: http://localhost:3000/api/v1
-    description: Development Server
   - url: http://bootcamper-env.eba-awephpyv.ap-south-1.elasticbeanstalk.com/api/v1
     description: AWS Elastic Bean Stalk
+  - url: http://localhost:3000/api/v1
+    description: Development Server
 info:
   version: 1.0.0
   title: BootCamper API
@@ -182,33 +182,19 @@ paths:
             type: string
           required: true
           description: Bootcamp ID
-        - in: formData
-          name: file
-          schema:
-            type: file
-          # required: true
-          description: The file to upload
       summary: Upload photo for bootcamp
       tags:
         - Bootcamps
-      responses:
-        '200':
-          description: On success
-        '400':
-          description: On error
-  /bootcamps/upload:
-    post:
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: imageFile
-          schema:
-            type: file
-          description: The file to upload
-      summary: Upload Test photo
-      tags:
-        - Bootcamps
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: file
+                  format: binary
       responses:
         '200':
           description: On success
@@ -385,6 +371,16 @@ paths:
           application/json:
             schema:
               $ref: '#components/schemas/LoginModel'
+      responses:
+        '200':
+          description: On success
+        '400':
+          description: On error
+  /auth/logout:
+    get:
+      summary: Logout user by clearing cookie token
+      tags:
+        - Auth
       responses:
         '200':
           description: On success

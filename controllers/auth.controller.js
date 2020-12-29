@@ -81,6 +81,24 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Log user out / clear cookie
+// @route   GET /api/v1/auth/logout
+// @access  Private
+exports.logout = asyncHandler(async (req, res, next) => {
+  const methodName = logger + '[Logout]';
+
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'Successfully Logged out',
+    data: {},
+  });
+});
+
 // @desc    Update user details
 // @route   PUT /api/v1/auth/updatedetails
 // @access  Private
