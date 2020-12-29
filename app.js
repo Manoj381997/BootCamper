@@ -13,8 +13,8 @@ const cookieParser = require('cookie-parser');
 
 // Security packages
 const mongoSanitize = require('express-mongo-sanitize');
-const helmet = require('helmet');
-const xss = require('xss-clean');
+// const helmet = require('helmet');
+// const xss = require('xss-clean');
 const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 // const cors = require('cors');
@@ -33,11 +33,11 @@ app.use(mongoSanitize());
 
 // Set security headers like XSS-Protection, DNS-Prefetch-Control
 // app.use(helmet({ contentSecurityPolicy: false })); // For Docgen
-app.use(helmet());
+// app.use(helmet());
 
 // Middleware use to sanitize user input
 // Prevent XSS attacks like adding html script tags in text,name,etc...
-app.use(xss());
+// app.use(xss());
 
 // Prevent Http Parameter Pollution
 app.use(hpp());
