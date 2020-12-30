@@ -14,12 +14,14 @@ const cookieParser = require('cookie-parser');
 // Security packages
 const mongoSanitize = require('express-mongo-sanitize');
 // const helmet = require('helmet');
-// const xss = require('xss-clean');
-// const hpp = require('hpp');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 
 const app = express();
+
+app.enable('trust proxy');
 
 // Body parser
 app.use(express.json());
@@ -37,10 +39,10 @@ app.use(mongoSanitize());
 
 // Middleware use to sanitize user input
 // Prevent XSS attacks like adding html script tags in text,name,etc...
-// app.use(xss());
+app.use(xss());
 
 // Prevent Http Parameter Pollution
-// app.use(hpp());
+app.use(hpp());
 
 // Enable CORS, Cross-Origin Resource sharing
 app.use(cors());
