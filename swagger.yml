@@ -168,7 +168,6 @@ paths:
         '400':
           description: On error
   /bootcamps/{id}/photo:
-    # x-swagger-router-controller: bootcamps.controller
     put:
       security:
         - BearerAuth: []

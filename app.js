@@ -12,12 +12,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 
 // Security packages
-// const mongoSanitize = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 // const helmet = require('helmet');
 // const xss = require('xss-clean');
 // const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
-// const cors = require('cors');
+const cors = require('cors');
 
 const app = express();
 
@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 // Sanitize data - To prevent NoSql Injection
 // https://blog.websecurify.com/2014/08/hacking-nodejs-and-mongodb.html
-// app.use(mongoSanitize());
+app.use(mongoSanitize());
 
 // Set security headers like XSS-Protection, DNS-Prefetch-Control
 // app.use(helmet({ contentSecurityPolicy: false })); // For Docgen
@@ -43,14 +43,20 @@ app.use(cookieParser());
 // app.use(hpp());
 
 // Enable CORS, Cross-Origin Resource sharing
-// app.use(cors());
+app.use(cors());
 
 // Global rate limiter
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100,
+  max: 0,
 });
 app.use(limiter);
+
+// Rate limiter for specific URL's
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -91,26 +97,9 @@ app.get('/', (req, res) => {
 // Mount Routers
 app.use(API + '/bootcamps', bootcampsRouter);
 app.use(API + '/courses', coursesRouter);
-app.use(
-  API + '/auth',
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 100,
-  }),
-  authRouter
-);
-app.use(API + '/users', userRouter);
+app.use(API + '/auth', authLimiter, authRouter);
+app.use(API + '/users', authLimiter, userRouter);
 app.use(API + '/reviews', reviewRouter);
-
-// app.post(API + '/bootcamps/upload', (req, res, next) => {
-//   console.log('Test File');
-//   if (!req.files) {
-//     return next(new Error('Please upload a file', 400));
-//   }
-//   res.status(200).json({
-//     MESSAGE: 'Welcome to DevCamper REST API. Use /api/v1/.... to proceed ',
-//   });
-// });
 
 // Load Swagger
 app.use(
